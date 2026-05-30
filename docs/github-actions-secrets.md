@@ -13,8 +13,9 @@ The workflow can sign in either automatic or manual mode.
 
 ## Automatic signing secrets
 
-These are enough for Xcode to manage signing on the macOS runner. They are also
-used to upload the exported IPA to App Store Connect.
+These are enough for the workflow to create an Apple Distribution certificate
+and App Store provisioning profile on the macOS runner. They are also used to
+upload the exported IPA to App Store Connect.
 
 | Purpose | Preferred secret | Supported aliases |
 | --- | --- | --- |

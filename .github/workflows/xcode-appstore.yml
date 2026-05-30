@@ -111,7 +111,7 @@ jobs:
           if [ "${HAS_MANUAL_SIGNING}" = "true" ]; then
             SIGNING_MODE=manual
           elif [ "${HAS_ASC_PRIVATE_KEY}" = "true" ]; then
-            SIGNING_MODE=automatic
+            SIGNING_MODE=api-generated
           else
             SIGNING_MODE=missing
           fi
@@ -154,7 +154,7 @@ jobs:
           set -euo pipefail
 
           if [ "${SIGNING_MODE}" != "manual" ]; then
-            echo "Using automatic signing; skipping manual certificate/profile import."
+            echo "Using App Store Connect API-generated signing assets; skipping uploaded certificate/profile import."
             exit 0
           fi
 
@@ -212,6 +212,156 @@ jobs:
           chmod 600 "${HOME}/private_keys/AuthKey_${ASC_KEY_ID}.p8"
           echo "ASC_KEY_PATH=${HOME}/private_keys/AuthKey_${ASC_KEY_ID}.p8" >> "${GITHUB_ENV}"
 
+      - name: Create signing assets with App Store Connect API
+        run: |
+          set -euo pipefail
+
+          if [ "${SIGNING_MODE}" != "api-generated" ]; then
+            echo "Using uploaded signing assets; skipping App Store Connect signing asset creation."
+            exit 0
+          fi
+
+          base64url() {
+            openssl base64 -A | tr '+/' '-_' | tr -d '='
+          }
+
+          now="$(date +%s)"
+          exp="$((now + 900))"
+          jwt_header="$(printf '{"alg":"ES256","kid":"%s","typ":"JWT"}' "${ASC_KEY_ID}" | base64url)"
+          jwt_payload="$(printf '{"iss":"%s","iat":%s,"exp":%s,"aud":"appstoreconnect-v1"}' "${ASC_ISSUER_ID}" "${now}" "${exp}" | base64url)"
+          jwt_signature="$(printf "%s.%s" "${jwt_header}" "${jwt_payload}" | openssl dgst -sha256 -sign "${ASC_KEY_PATH}" | base64url)"
+          ASC_TOKEN="${jwt_header}.${jwt_payload}.${jwt_signature}"
+
+          SIGNING_KEY_PATH="${RUNNER_TEMP}/github_actions_distribution.key"
+          CSR_PATH="${RUNNER_TEMP}/github_actions_distribution.csr"
+          CERTIFICATE_CER_PATH="${RUNNER_TEMP}/github_actions_distribution.cer"
+          CERTIFICATE_P12_PATH="${RUNNER_TEMP}/github_actions_distribution.p12"
+          PROFILE_PATH="${RUNNER_TEMP}/github_actions_app_store.mobileprovision"
+          PROFILE_PLIST="${RUNNER_TEMP}/github_actions_app_store.plist"
+          KEYCHAIN_PATH="${RUNNER_TEMP}/app-signing.keychain-db"
+          GENERATED_CERT_PASSWORD="$(uuidgen)"
+
+          openssl genrsa -out "${SIGNING_KEY_PATH}" 2048
+          openssl req -new -key "${SIGNING_KEY_PATH}" -out "${CSR_PATH}" -subj "/CN=FieldOps IQ GitHub Actions"
+
+          ASC_TOKEN="${ASC_TOKEN}" \
+          APP_NAME="${APP_NAME}" \
+          BUNDLE_ID="${BUNDLE_ID}" \
+          CSR_PATH="${CSR_PATH}" \
+          CERTIFICATE_CER_PATH="${CERTIFICATE_CER_PATH}" \
+          PROFILE_PATH="${PROFILE_PATH}" \
+          GITHUB_RUN_NUMBER="${GITHUB_RUN_NUMBER}" \
+          python3 - <<'PY'
+          import base64
+          import json
+          import os
+          import pathlib
+          import sys
+          import urllib.parse
+          import urllib.request
+
+          token = os.environ["ASC_TOKEN"]
+          base_url = "https://api.appstoreconnect.apple.com/v1"
+
+          def request(method, path, payload=None):
+              data = None
+              headers = {
+                  "Authorization": f"Bearer {token}",
+                  "Content-Type": "application/json",
+              }
+              if payload is not None:
+                  data = json.dumps(payload).encode("utf-8")
+              req = urllib.request.Request(base_url + path, data=data, headers=headers, method=method)
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as resp:
+                      return json.loads(resp.read().decode("utf-8"))
+              except urllib.error.HTTPError as exc:
+                  body = exc.read().decode("utf-8", errors="replace")
+                  print(body, file=sys.stderr)
+                  raise
+
+          csr_content = pathlib.Path(os.environ["CSR_PATH"]).read_text()
+          certificate = request("POST", "/certificates", {
+              "data": {
+                  "type": "certificates",
+                  "attributes": {
+                      "certificateType": "IOS_DISTRIBUTION",
+                      "csrContent": csr_content,
+                  },
+              },
+          })
+          certificate_id = certificate["data"]["id"]
+          certificate_content = certificate["data"]["attributes"]["certificateContent"]
+          pathlib.Path(os.environ["CERTIFICATE_CER_PATH"]).write_bytes(base64.b64decode(certificate_content))
+
+          identifier = os.environ["BUNDLE_ID"]
+          bundle_query = urllib.parse.urlencode({"filter[identifier]": identifier})
+          bundles = request("GET", f"/bundleIds?{bundle_query}")
+          if bundles["data"]:
+              bundle_id = bundles["data"][0]["id"]
+          else:
+              bundle = request("POST", "/bundleIds", {
+                  "data": {
+                      "type": "bundleIds",
+                      "attributes": {
+                          "name": os.environ["APP_NAME"],
+                          "identifier": identifier,
+                          "platform": "IOS",
+                      },
+                  },
+              })
+              bundle_id = bundle["data"]["id"]
+
+          profile_name = f"{os.environ['APP_NAME']} GitHub App Store {os.environ['GITHUB_RUN_NUMBER']}"
+          profile = request("POST", "/profiles", {
+              "data": {
+                  "type": "profiles",
+                  "attributes": {
+                      "name": profile_name,
+                      "profileType": "IOS_APP_STORE",
+                  },
+                  "relationships": {
+                      "bundleId": {
+                          "data": {"type": "bundleIds", "id": bundle_id},
+                      },
+                      "certificates": {
+                          "data": [{"type": "certificates", "id": certificate_id}],
+                      },
+                  },
+              },
+          })
+          profile_content = profile["data"]["attributes"]["profileContent"]
+          pathlib.Path(os.environ["PROFILE_PATH"]).write_bytes(base64.b64decode(profile_content))
+          PY
+
+          openssl pkcs12 -export \
+            -inkey "${SIGNING_KEY_PATH}" \
+            -in "${CERTIFICATE_CER_PATH}" \
+            -out "${CERTIFICATE_P12_PATH}" \
+            -password "pass:${GENERATED_CERT_PASSWORD}"
+
+          security create-keychain -p "${KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+          security set-keychain-settings -lut 21600 "${KEYCHAIN_PATH}"
+          security unlock-keychain -p "${KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+          security import "${CERTIFICATE_P12_PATH}" -P "${GENERATED_CERT_PASSWORD}" -A -t cert -f pkcs12 -k "${KEYCHAIN_PATH}"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "${KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+          security list-keychains -d user -s "${KEYCHAIN_PATH}" login.keychain-db
+
+          mkdir -p "${HOME}/Library/MobileDevice/Provisioning Profiles"
+          security cms -D -i "${PROFILE_PATH}" > "${PROFILE_PLIST}"
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" "${PROFILE_PLIST}")
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c "Print Name" "${PROFILE_PLIST}")
+          PROFILE_APP_ID=$(/usr/libexec/PlistBuddy -c "Print Entitlements:application-identifier" "${PROFILE_PLIST}")
+
+          cp "${PROFILE_PATH}" "${HOME}/Library/MobileDevice/Provisioning Profiles/${PROFILE_UUID}.mobileprovision"
+
+          echo "PROFILE_UUID=${PROFILE_UUID}" >> "${GITHUB_ENV}"
+          echo "PROFILE_NAME=${PROFILE_NAME}" >> "${GITHUB_ENV}"
+          echo "KEYCHAIN_PATH=${KEYCHAIN_PATH}" >> "${GITHUB_ENV}"
+          echo "SIGNING_MODE=manual" >> "${GITHUB_ENV}"
+          echo "Created App Store provisioning profile: ${PROFILE_NAME}"
+          echo "Profile application identifier: ${PROFILE_APP_ID}"
+
       - name: Archive
         run: |
           set -euo pipefail
@@ -238,23 +388,12 @@ jobs:
             -skipMacroValidation
           )
 
-          if [ "${SIGNING_MODE}" = "manual" ]; then
-            xcodebuild clean archive \
-              "${common_args[@]}" \
-              CODE_SIGN_STYLE=Manual \
-              CODE_SIGN_IDENTITY="Apple Distribution" \
-              PROVISIONING_PROFILE_SPECIFIER="${PROFILE_NAME}" \
-              OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}"
-          else
-            xcodebuild clean archive \
-              "${common_args[@]}" \
-              CODE_SIGN_STYLE=Automatic \
-              CODE_SIGN_IDENTITY="Apple Distribution" \
-              -allowProvisioningUpdates \
-              -authenticationKeyPath "${ASC_KEY_PATH}" \
-              -authenticationKeyID "${ASC_KEY_ID}" \
-              -authenticationKeyIssuerID "${ASC_ISSUER_ID}"
-          fi
+          xcodebuild clean archive \
+            "${common_args[@]}" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="${PROFILE_NAME}" \
+            OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}"
 
       - name: Export IPA
         run: |
@@ -325,15 +464,6 @@ jobs:
             -exportPath "${EXPORT_PATH}"
             -exportOptionsPlist "${EXPORT_OPTIONS}"
           )
-
-          if [ "${SIGNING_MODE}" = "automatic" ]; then
-            export_args+=(
-              -allowProvisioningUpdates
-              -authenticationKeyPath "${ASC_KEY_PATH}"
-              -authenticationKeyID "${ASC_KEY_ID}"
-              -authenticationKeyIssuerID "${ASC_ISSUER_ID}"
-            )
-          fi
 
           make_export_options "app-store-connect"
           if ! xcodebuild -exportArchive "${export_args[@]}"; then
