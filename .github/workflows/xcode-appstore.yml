@@ -98,11 +98,29 @@ jobs:
           ASC_ISSUER_ID="$(first_present "${APP_STORE_CONNECT_API_ISSUER_ID_SECRET}" "${APP_STORE_CONNECT_ISSUER_ID_SECRET}" "${ASC_ISSUER_ID_SECRET}")"
           ASC_PRIVATE_KEY="$(first_present "${APP_STORE_CONNECT_API_PRIVATE_KEY_SECRET}" "${APP_STORE_CONNECT_PRIVATE_KEY_SECRET}" "${ASC_PRIVATE_KEY_SECRET}")"
 
+          HAS_MANUAL_SIGNING=false
+          if [ -n "${CERTIFICATE_BASE64}" ] && [ -n "${CERTIFICATE_PASSWORD}" ] && [ -n "${PROFILE_BASE64}" ]; then
+            HAS_MANUAL_SIGNING=true
+          fi
+
+          HAS_ASC_PRIVATE_KEY=false
+          if [ -n "${ASC_KEY_ID}" ] && [ -n "${ASC_ISSUER_ID}" ] && [ -n "${ASC_PRIVATE_KEY}" ]; then
+            HAS_ASC_PRIVATE_KEY=true
+          fi
+
+          if [ "${HAS_MANUAL_SIGNING}" = "true" ]; then
+            SIGNING_MODE=manual
+          elif [ "${HAS_ASC_PRIVATE_KEY}" = "true" ]; then
+            SIGNING_MODE=automatic
+          else
+            SIGNING_MODE=missing
+          fi
+
           missing=()
           [ -n "${TEAM_ID}" ] || missing+=("APPLE_TEAM_ID or DEVELOPMENT_TEAM")
-          [ -n "${CERTIFICATE_BASE64}" ] || missing+=("BUILD_CERTIFICATE_BASE64 or IOS_CERTIFICATE_BASE64 or P12_BASE64")
-          [ -n "${CERTIFICATE_PASSWORD}" ] || missing+=("P12_PASSWORD or CERTIFICATE_PASSWORD or IOS_CERTIFICATE_PASSWORD")
-          [ -n "${PROFILE_BASE64}" ] || missing+=("BUILD_PROVISION_PROFILE_BASE64 or IOS_PROVISION_PROFILE_BASE64 or MOBILEPROVISION_BASE64")
+          if [ "${SIGNING_MODE}" = "missing" ]; then
+            missing+=("either App Store Connect API key secrets for automatic signing or certificate/profile secrets for manual signing")
+          fi
 
           if [ "${#missing[@]}" -gt 0 ]; then
             printf "Missing required signing secret(s):\n"
@@ -115,7 +133,8 @@ jobs:
             echo "KEYCHAIN_PASSWORD=${KEYCHAIN_PASSWORD}"
             echo "ASC_KEY_ID=${ASC_KEY_ID}"
             echo "ASC_ISSUER_ID=${ASC_ISSUER_ID}"
-            echo "HAS_ASC_PRIVATE_KEY=$([ -n "${ASC_PRIVATE_KEY}" ] && echo true || echo false)"
+            echo "HAS_ASC_PRIVATE_KEY=${HAS_ASC_PRIVATE_KEY}"
+            echo "SIGNING_MODE=${SIGNING_MODE}"
             echo "CERTIFICATE_BASE64<<__CERT__"
             echo "${CERTIFICATE_BASE64}"
             echo "__CERT__"
@@ -133,6 +152,11 @@ jobs:
       - name: Install signing assets
         run: |
           set -euo pipefail
+
+          if [ "${SIGNING_MODE}" != "manual" ]; then
+            echo "Using automatic signing; skipping manual certificate/profile import."
+            exit 0
+          fi
 
           CERTIFICATE_PATH="${RUNNER_TEMP}/ios_distribution.p12"
           PROFILE_PATH="${RUNNER_TEMP}/profile.mobileprovision"
@@ -170,9 +194,13 @@ jobs:
           echo "Profile application identifier: ${PROFILE_APP_ID}"
 
       - name: Install App Store Connect API key
-        if: ${{ env.HAS_ASC_PRIVATE_KEY == 'true' }}
         run: |
           set -euo pipefail
+
+          if [ "${HAS_ASC_PRIVATE_KEY}" != "true" ]; then
+            echo "No App Store Connect API private key secret found; skipping API key install."
+            exit 0
+          fi
 
           if [ -z "${ASC_KEY_ID}" ] || [ -z "${ASC_ISSUER_ID}" ]; then
             echo "APP_STORE_CONNECT API key ID and issuer ID are required when uploading to App Store Connect."
@@ -197,21 +225,35 @@ jobs:
           echo "ARCHIVE_PATH=${ARCHIVE_PATH}" >> "${GITHUB_ENV}"
           echo "BUILD_NUMBER=${BUILD_NUMBER}" >> "${GITHUB_ENV}"
 
-          xcodebuild clean archive \
-            -project "${PROJECT_PATH}" \
-            -scheme "${SCHEME}" \
-            -configuration "${CONFIGURATION}" \
-            -destination "generic/platform=iOS" \
-            -archivePath "${ARCHIVE_PATH}" \
-            CURRENT_PROJECT_VERSION="${BUILD_NUMBER}" \
-            DEVELOPMENT_TEAM="${TEAM_ID}" \
-            PRODUCT_BUNDLE_IDENTIFIER="${BUNDLE_ID}" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE_SPECIFIER="${PROFILE_NAME}" \
-            OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}" \
-            -skipPackagePluginValidation \
+          common_args=(
+            -project "${PROJECT_PATH}"
+            -scheme "${SCHEME}"
+            -configuration "${CONFIGURATION}"
+            -destination "generic/platform=iOS"
+            -archivePath "${ARCHIVE_PATH}"
+            CURRENT_PROJECT_VERSION="${BUILD_NUMBER}"
+            DEVELOPMENT_TEAM="${TEAM_ID}"
+            PRODUCT_BUNDLE_IDENTIFIER="${BUNDLE_ID}"
+            -skipPackagePluginValidation
             -skipMacroValidation
+          )
+
+          if [ "${SIGNING_MODE}" = "manual" ]; then
+            xcodebuild clean archive \
+              "${common_args[@]}" \
+              CODE_SIGN_STYLE=Manual \
+              CODE_SIGN_IDENTITY="Apple Distribution" \
+              PROVISIONING_PROFILE_SPECIFIER="${PROFILE_NAME}" \
+              OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}"
+          else
+            xcodebuild clean archive \
+              "${common_args[@]}" \
+              CODE_SIGN_STYLE=Automatic \
+              -allowProvisioningUpdates \
+              -authenticationKeyPath "${ASC_KEY_PATH}" \
+              -authenticationKeyID "${ASC_KEY_ID}" \
+              -authenticationKeyIssuerID "${ASC_ISSUER_ID}"
+          fi
 
       - name: Export IPA
         run: |
@@ -223,7 +265,8 @@ jobs:
 
           make_export_options() {
             local method="$1"
-            cat > "${EXPORT_OPTIONS}" <<PLIST
+            if [ "${SIGNING_MODE}" = "manual" ]; then
+              cat > "${EXPORT_OPTIONS}" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
@@ -250,19 +293,52 @@ jobs:
           </dict>
           </plist>
           PLIST
+            else
+              cat > "${EXPORT_OPTIONS}" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>${method}</string>
+            <key>destination</key>
+            <string>export</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>teamID</key>
+            <string>${TEAM_ID}</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>uploadBitcode</key>
+            <false/>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          PLIST
+            fi
           }
 
+          export_args=(
+            -archivePath "${ARCHIVE_PATH}"
+            -exportPath "${EXPORT_PATH}"
+            -exportOptionsPlist "${EXPORT_OPTIONS}"
+          )
+
+          if [ "${SIGNING_MODE}" = "automatic" ]; then
+            export_args+=(
+              -allowProvisioningUpdates
+              -authenticationKeyPath "${ASC_KEY_PATH}"
+              -authenticationKeyID "${ASC_KEY_ID}"
+              -authenticationKeyIssuerID "${ASC_ISSUER_ID}"
+            )
+          fi
+
           make_export_options "app-store-connect"
-          if ! xcodebuild -exportArchive \
-            -archivePath "${ARCHIVE_PATH}" \
-            -exportPath "${EXPORT_PATH}" \
-            -exportOptionsPlist "${EXPORT_OPTIONS}"; then
+          if ! xcodebuild -exportArchive "${export_args[@]}"; then
             echo "Retrying export with legacy app-store method."
             make_export_options "app-store"
-            xcodebuild -exportArchive \
-              -archivePath "${ARCHIVE_PATH}" \
-              -exportPath "${EXPORT_PATH}" \
-              -exportOptionsPlist "${EXPORT_OPTIONS}"
+            xcodebuild -exportArchive "${export_args[@]}"
           fi
 
           IPA_PATH="$(find "${EXPORT_PATH}" -name "*.ipa" -print -quit)"
