@@ -221,16 +221,45 @@ jobs:
             exit 0
           fi
 
-          base64url() {
-            openssl base64 -A | tr '+/' '-_' | tr -d '='
+          ASC_TOKEN="$(ruby <<'RUBY'
+          require "base64"
+          require "json"
+          require "openssl"
+
+          def base64url(data)
+            Base64.urlsafe_encode64(data).delete("=")
+          end
+
+          def int_to_fixed_bytes(value, length)
+            hex = value.to_i.to_s(16)
+            hex = "0#{hex}" if hex.length.odd?
+            [hex].pack("H*").rjust(length, "\0")[-length, length]
+          end
+
+          key = OpenSSL::PKey.read(File.read(ENV.fetch("ASC_KEY_PATH")))
+          now = Time.now.to_i
+          header = {
+            alg: "ES256",
+            kid: ENV.fetch("ASC_KEY_ID"),
+            typ: "JWT",
+          }
+          payload = {
+            iss: ENV.fetch("ASC_ISSUER_ID"),
+            iat: now,
+            exp: now + 900,
+            aud: "appstoreconnect-v1",
           }
 
-          now="$(date +%s)"
-          exp="$((now + 900))"
-          jwt_header="$(printf '{"alg":"ES256","kid":"%s","typ":"JWT"}' "${ASC_KEY_ID}" | base64url)"
-          jwt_payload="$(printf '{"iss":"%s","iat":%s,"exp":%s,"aud":"appstoreconnect-v1"}' "${ASC_ISSUER_ID}" "${now}" "${exp}" | base64url)"
-          jwt_signature="$(printf "%s.%s" "${jwt_header}" "${jwt_payload}" | openssl dgst -sha256 -sign "${ASC_KEY_PATH}" | base64url)"
-          ASC_TOKEN="${jwt_header}.${jwt_payload}.${jwt_signature}"
+          signing_input = "#{base64url(header.to_json)}.#{base64url(payload.to_json)}"
+          digest = OpenSSL::Digest::SHA256.digest(signing_input)
+          der_signature = key.dsa_sign_asn1(digest)
+          signature_parts = OpenSSL::ASN1.decode(der_signature).value
+          raw_signature = int_to_fixed_bytes(signature_parts[0].value, 32) +
+            int_to_fixed_bytes(signature_parts[1].value, 32)
+
+          puts "#{signing_input}.#{base64url(raw_signature)}"
+          RUBY
+          )"
 
           SIGNING_KEY_PATH="${RUNNER_TEMP}/github_actions_distribution.key"
           CSR_PATH="${RUNNER_TEMP}/github_actions_distribution.csr"
