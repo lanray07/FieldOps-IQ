@@ -1,0 +1,491 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		101000000000000000000001 /* FieldOpsIQApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000001 /* FieldOpsIQApp.swift */; };
+		101000000000000000000002 /* DomainModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000002 /* DomainModels.swift */; };
+		101000000000000000000003 /* AppViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000003 /* AppViewModels.swift */; };
+		101000000000000000000004 /* AppServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000004 /* AppServices.swift */; };
+		101000000000000000000005 /* PremiumComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000005 /* PremiumComponents.swift */; };
+		101000000000000000000006 /* AppShellViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000006 /* AppShellViews.swift */; };
+		101000000000000000000007 /* JobViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000007 /* JobViews.swift */; };
+		101000000000000000000008 /* FieldToolViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000008 /* FieldToolViews.swift */; };
+		101000000000000000000009 /* AnalyticsReportsSettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000009 /* AnalyticsReportsSettingsViews.swift */; };
+		10100000000000000000000A /* VoiceServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10200000000000000000000A /* VoiceServices.swift */; };
+		10100000000000000000000B /* OCRArchitecture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10200000000000000000000B /* OCRArchitecture.swift */; };
+		10100000000000000000000C /* KnowledgeBaseSeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10200000000000000000000C /* KnowledgeBaseSeed.swift */; };
+		10100000000000000000000D /* WidgetArchitecture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10200000000000000000000D /* WidgetArchitecture.swift */; };
+		10100000000000000000000E /* WatchArchitecture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10200000000000000000000E /* WatchArchitecture.swift */; };
+		10100000000000000000000F /* HumanAssetsCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10200000000000000000000F /* HumanAssetsCatalog.swift */; };
+		101000000000000000000010 /* KnowledgeBaseSeed.json in Resources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000010 /* KnowledgeBaseSeed.json */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		102000000000000000000000 /* FieldOps IQ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FieldOps IQ.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		102000000000000000000001 /* FieldOpsIQApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldOpsIQApp.swift; sourceTree = "<group>"; };
+		102000000000000000000002 /* DomainModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainModels.swift; sourceTree = "<group>"; };
+		102000000000000000000003 /* AppViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModels.swift; sourceTree = "<group>"; };
+		102000000000000000000004 /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
+		102000000000000000000005 /* PremiumComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumComponents.swift; sourceTree = "<group>"; };
+		102000000000000000000006 /* AppShellViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellViews.swift; sourceTree = "<group>"; };
+		102000000000000000000007 /* JobViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobViews.swift; sourceTree = "<group>"; };
+		102000000000000000000008 /* FieldToolViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldToolViews.swift; sourceTree = "<group>"; };
+		102000000000000000000009 /* AnalyticsReportsSettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsReportsSettingsViews.swift; sourceTree = "<group>"; };
+		10200000000000000000000A /* VoiceServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceServices.swift; sourceTree = "<group>"; };
+		10200000000000000000000B /* OCRArchitecture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRArchitecture.swift; sourceTree = "<group>"; };
+		10200000000000000000000C /* KnowledgeBaseSeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeBaseSeed.swift; sourceTree = "<group>"; };
+		10200000000000000000000D /* WidgetArchitecture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetArchitecture.swift; sourceTree = "<group>"; };
+		10200000000000000000000E /* WatchArchitecture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchArchitecture.swift; sourceTree = "<group>"; };
+		10200000000000000000000F /* HumanAssetsCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HumanAssetsCatalog.swift; sourceTree = "<group>"; };
+		102000000000000000000010 /* KnowledgeBaseSeed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = KnowledgeBaseSeed.json; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		103000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		104000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				104000000000000000000002 /* FieldOpsIQ */,
+				104000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		104000000000000000000002 /* FieldOpsIQ */ = {
+			isa = PBXGroup;
+			children = (
+				102000000000000000000001 /* FieldOpsIQApp.swift */,
+				104000000000000000000004 /* Models */,
+				104000000000000000000005 /* ViewModels */,
+				104000000000000000000006 /* Services */,
+				104000000000000000000007 /* Components */,
+				104000000000000000000008 /* Views */,
+				104000000000000000000009 /* Voice */,
+				10400000000000000000000A /* OCRPlaceholder */,
+				10400000000000000000000B /* OfflineKnowledgeBase */,
+				10400000000000000000000C /* WidgetsPlaceholder */,
+				10400000000000000000000D /* WatchPlaceholder */,
+				10400000000000000000000E /* Resources */,
+				10400000000000000000000F /* HumanAssetsPlaceholder */,
+			);
+			path = FieldOpsIQ;
+			sourceTree = "<group>";
+		};
+		104000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				102000000000000000000000 /* FieldOps IQ.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		104000000000000000000004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				102000000000000000000002 /* DomainModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		104000000000000000000005 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				102000000000000000000003 /* AppViewModels.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		104000000000000000000006 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				102000000000000000000004 /* AppServices.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		104000000000000000000007 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				102000000000000000000005 /* PremiumComponents.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		104000000000000000000008 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				102000000000000000000006 /* AppShellViews.swift */,
+				102000000000000000000007 /* JobViews.swift */,
+				102000000000000000000008 /* FieldToolViews.swift */,
+				102000000000000000000009 /* AnalyticsReportsSettingsViews.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		104000000000000000000009 /* Voice */ = {
+			isa = PBXGroup;
+			children = (
+				10200000000000000000000A /* VoiceServices.swift */,
+			);
+			path = Voice;
+			sourceTree = "<group>";
+		};
+		10400000000000000000000A /* OCRPlaceholder */ = {
+			isa = PBXGroup;
+			children = (
+				10200000000000000000000B /* OCRArchitecture.swift */,
+			);
+			path = OCRPlaceholder;
+			sourceTree = "<group>";
+		};
+		10400000000000000000000B /* OfflineKnowledgeBase */ = {
+			isa = PBXGroup;
+			children = (
+				10200000000000000000000C /* KnowledgeBaseSeed.swift */,
+			);
+			path = OfflineKnowledgeBase;
+			sourceTree = "<group>";
+		};
+		10400000000000000000000C /* WidgetsPlaceholder */ = {
+			isa = PBXGroup;
+			children = (
+				10200000000000000000000D /* WidgetArchitecture.swift */,
+			);
+			path = WidgetsPlaceholder;
+			sourceTree = "<group>";
+		};
+		10400000000000000000000D /* WatchPlaceholder */ = {
+			isa = PBXGroup;
+			children = (
+				10200000000000000000000E /* WatchArchitecture.swift */,
+			);
+			path = WatchPlaceholder;
+			sourceTree = "<group>";
+		};
+		10400000000000000000000E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				102000000000000000000010 /* KnowledgeBaseSeed.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		10400000000000000000000F /* HumanAssetsPlaceholder */ = {
+			isa = PBXGroup;
+			children = (
+				10200000000000000000000F /* HumanAssetsCatalog.swift */,
+			);
+			path = HumanAssetsPlaceholder;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		105000000000000000000001 /* FieldOps IQ */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10A000000000000000000003 /* Build configuration list for PBXNativeTarget "FieldOps IQ" */;
+			buildPhases = (
+				107000000000000000000001 /* Sources */,
+				103000000000000000000001 /* Frameworks */,
+				108000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "FieldOps IQ";
+			productName = "FieldOps IQ";
+			productReference = 102000000000000000000000 /* FieldOps IQ.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		106000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					105000000000000000000001 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = 10A000000000000000000001 /* Build configuration list for PBXProject "FieldOps IQ" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 104000000000000000000001;
+			productRefGroup = 104000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				105000000000000000000001 /* FieldOps IQ */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		108000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				101000000000000000000010 /* KnowledgeBaseSeed.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		107000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				101000000000000000000001 /* FieldOpsIQApp.swift in Sources */,
+				101000000000000000000002 /* DomainModels.swift in Sources */,
+				101000000000000000000003 /* AppViewModels.swift in Sources */,
+				101000000000000000000004 /* AppServices.swift in Sources */,
+				101000000000000000000005 /* PremiumComponents.swift in Sources */,
+				101000000000000000000006 /* AppShellViews.swift in Sources */,
+				101000000000000000000007 /* JobViews.swift in Sources */,
+				101000000000000000000008 /* FieldToolViews.swift in Sources */,
+				101000000000000000000009 /* AnalyticsReportsSettingsViews.swift in Sources */,
+				10100000000000000000000A /* VoiceServices.swift in Sources */,
+				10100000000000000000000B /* OCRArchitecture.swift in Sources */,
+				10100000000000000000000C /* KnowledgeBaseSeed.swift in Sources */,
+				10100000000000000000000D /* WidgetArchitecture.swift in Sources */,
+				10100000000000000000000E /* WatchArchitecture.swift in Sources */,
+				10100000000000000000000F /* HumanAssetsCatalog.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		109000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		109000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		109000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "FieldOps IQ";
+				INFOPLIST_KEY_NSCameraUsageDescription = "FieldOps IQ uses the camera to capture telecom equipment, site survey photos, and job evidence.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "FieldOps IQ uses the microphone to capture technician voice notes and convert them into reports.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FieldOps IQ imports photos for equipment scans, site surveys, and job documentation.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "FieldOps IQ uses speech recognition to transcribe technician field notes.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fieldopsiq.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		109000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "FieldOps IQ";
+				INFOPLIST_KEY_NSCameraUsageDescription = "FieldOps IQ uses the camera to capture telecom equipment, site survey photos, and job evidence.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "FieldOps IQ uses the microphone to capture technician voice notes and convert them into reports.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FieldOps IQ imports photos for equipment scans, site surveys, and job documentation.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "FieldOps IQ uses speech recognition to transcribe technician field notes.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fieldopsiq.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		10A000000000000000000001 /* Build configuration list for PBXProject "FieldOps IQ" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				109000000000000000000001 /* Debug */,
+				109000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		10A000000000000000000003 /* Build configuration list for PBXNativeTarget "FieldOps IQ" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				109000000000000000000003 /* Debug */,
+				109000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 106000000000000000000001 /* Project object */;
+}
