@@ -264,6 +264,7 @@ jobs:
           SIGNING_KEY_PATH="${RUNNER_TEMP}/github_actions_distribution.key"
           CSR_PATH="${RUNNER_TEMP}/github_actions_distribution.csr"
           CERTIFICATE_CER_PATH="${RUNNER_TEMP}/github_actions_distribution.cer"
+          CERTIFICATE_PEM_PATH="${RUNNER_TEMP}/github_actions_distribution.pem"
           CERTIFICATE_P12_PATH="${RUNNER_TEMP}/github_actions_distribution.p12"
           PROFILE_PATH="${RUNNER_TEMP}/github_actions_app_store.mobileprovision"
           PROFILE_PLIST="${RUNNER_TEMP}/github_actions_app_store.plist"
@@ -414,9 +415,13 @@ jobs:
           pathlib.Path(os.environ["PROFILE_PATH"]).write_bytes(base64.b64decode(profile_content))
           PY
 
+          if ! openssl x509 -in "${CERTIFICATE_CER_PATH}" -out "${CERTIFICATE_PEM_PATH}" 2>/dev/null; then
+            openssl x509 -inform DER -in "${CERTIFICATE_CER_PATH}" -out "${CERTIFICATE_PEM_PATH}"
+          fi
+
           openssl pkcs12 -export \
             -inkey "${SIGNING_KEY_PATH}" \
-            -in "${CERTIFICATE_CER_PATH}" \
+            -in "${CERTIFICATE_PEM_PATH}" \
             -out "${CERTIFICATE_P12_PATH}" \
             -password "pass:${GENERATED_CERT_PASSWORD}"
 
