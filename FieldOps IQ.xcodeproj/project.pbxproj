@@ -23,6 +23,7 @@
 		10100000000000000000000E /* WatchArchitecture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10200000000000000000000E /* WatchArchitecture.swift */; };
 		10100000000000000000000F /* HumanAssetsCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10200000000000000000000F /* HumanAssetsCatalog.swift */; };
 		101000000000000000000010 /* KnowledgeBaseSeed.json in Resources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000010 /* KnowledgeBaseSeed.json */; };
+		101000000000000000000011 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 102000000000000000000011 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		10200000000000000000000E /* WatchArchitecture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchArchitecture.swift; sourceTree = "<group>"; };
 		10200000000000000000000F /* HumanAssetsCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HumanAssetsCatalog.swift; sourceTree = "<group>"; };
 		102000000000000000000010 /* KnowledgeBaseSeed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = KnowledgeBaseSeed.json; sourceTree = "<group>"; };
+		102000000000000000000011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				102000000000000000000001 /* FieldOpsIQApp.swift */,
+				102000000000000000000011 /* Assets.xcassets */,
 				104000000000000000000004 /* Models */,
 				104000000000000000000005 /* ViewModels */,
 				104000000000000000000006 /* Services */,
@@ -250,6 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				101000000000000000000010 /* KnowledgeBaseSeed.json in Resources */,
+				101000000000000000000011 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +404,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -407,11 +412,14 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "FieldOps IQ";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_NSCameraUsageDescription = "FieldOps IQ uses the camera to capture telecom equipment, site survey photos, and job evidence.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "FieldOps IQ uses the microphone to capture technician voice notes and convert them into reports.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FieldOps IQ imports photos for equipment scans, site surveys, and job documentation.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "FieldOps IQ uses speech recognition to transcribe technician field notes.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -434,6 +442,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -441,11 +450,14 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "FieldOps IQ";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_NSCameraUsageDescription = "FieldOps IQ uses the camera to capture telecom equipment, site survey photos, and job evidence.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "FieldOps IQ uses the microphone to capture technician voice notes and convert them into reports.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FieldOps IQ imports photos for equipment scans, site surveys, and job documentation.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "FieldOps IQ uses speech recognition to transcribe technician field notes.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

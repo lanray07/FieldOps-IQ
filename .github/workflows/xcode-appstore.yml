@@ -578,11 +578,20 @@ jobs:
         run: |
           set -euo pipefail
 
+          UPLOAD_LOG="${RUNNER_TEMP}/altool-upload.log"
+          set +e
           xcrun altool --upload-app \
             --type ios \
             --file "${IPA_PATH}" \
             --apiKey "${ASC_KEY_ID}" \
-            --apiIssuer "${ASC_ISSUER_ID}"
+            --apiIssuer "${ASC_ISSUER_ID}" 2>&1 | tee "${UPLOAD_LOG}"
+          upload_status="${PIPESTATUS[0]}"
+          set -e
+
+          if [ "${upload_status}" -ne 0 ] || grep -E "UPLOAD FAILED|Failed to upload package|Validation failed|ERROR:" "${UPLOAD_LOG}"; then
+            echo "App Store Connect upload failed validation."
+            exit 1
+          fi
 
       - name: Explain skipped App Store Connect upload
         if: ${{ (github.event_name == 'push' || inputs.upload_to_testflight == true) && env.HAS_ASC_PRIVATE_KEY != 'true' }}
