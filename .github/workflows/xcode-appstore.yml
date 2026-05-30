@@ -249,6 +249,7 @@ jobs:
             xcodebuild clean archive \
               "${common_args[@]}" \
               CODE_SIGN_STYLE=Automatic \
+              CODE_SIGN_IDENTITY="Apple Distribution" \
               -allowProvisioningUpdates \
               -authenticationKeyPath "${ASC_KEY_PATH}" \
               -authenticationKeyID "${ASC_KEY_ID}" \
