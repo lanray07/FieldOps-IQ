@@ -292,6 +292,16 @@ jobs:
           token = os.environ["ASC_TOKEN"]
           base_url = "https://api.appstoreconnect.apple.com/v1"
 
+          class AppStoreConnectError(Exception):
+              def __init__(self, status, body):
+                  super().__init__(body)
+                  self.status = status
+                  self.body = body
+                  try:
+                      self.payload = json.loads(body)
+                  except json.JSONDecodeError:
+                      self.payload = {}
+
           def request(method, path, payload=None):
               data = None
               headers = {
@@ -303,22 +313,63 @@ jobs:
               req = urllib.request.Request(base_url + path, data=data, headers=headers, method=method)
               try:
                   with urllib.request.urlopen(req, timeout=60) as resp:
-                      return json.loads(resp.read().decode("utf-8"))
+                      body = resp.read().decode("utf-8")
+                      return json.loads(body) if body else {}
               except urllib.error.HTTPError as exc:
                   body = exc.read().decode("utf-8", errors="replace")
-                  print(body, file=sys.stderr)
-                  raise
+                  raise AppStoreConnectError(exc.code, body) from exc
 
-          csr_content = pathlib.Path(os.environ["CSR_PATH"]).read_text()
-          certificate = request("POST", "/certificates", {
-              "data": {
-                  "type": "certificates",
-                  "attributes": {
-                      "certificateType": "IOS_DISTRIBUTION",
-                      "csrContent": csr_content,
+          def create_distribution_certificate():
+              csr_content = pathlib.Path(os.environ["CSR_PATH"]).read_text()
+              return request("POST", "/certificates", {
+                  "data": {
+                      "type": "certificates",
+                      "attributes": {
+                          "certificateType": "IOS_DISTRIBUTION",
+                          "csrContent": csr_content,
+                      },
                   },
-              },
-          })
+              })
+
+          def is_distribution_certificate_conflict(error):
+              if error.status != 409:
+                  return False
+              for item in error.payload.get("errors", []):
+                  detail = item.get("detail", "")
+                  if (
+                      item.get("code") == "ENTITY_ERROR"
+                      and "current iOS Distribution certificate" in detail
+                  ):
+                      return True
+              return False
+
+          def revoke_existing_distribution_certificates():
+              query = urllib.parse.urlencode({
+                  "filter[certificateType]": "IOS_DISTRIBUTION",
+                  "limit": "200",
+              })
+              certificates = request("GET", f"/certificates?{query}").get("data", [])
+              if not certificates:
+                  raise RuntimeError("Apple reported an iOS Distribution certificate conflict, but no iOS Distribution certificates were returned.")
+
+              for item in certificates:
+                  cert_id = item["id"]
+                  attrs = item.get("attributes", {})
+                  display_name = attrs.get("displayName") or attrs.get("name") or cert_id
+                  expiration = attrs.get("expirationDate", "unknown expiration")
+                  print(f"Revoking blocking iOS Distribution certificate {cert_id}: {display_name}, expires {expiration}")
+                  request("DELETE", f"/certificates/{cert_id}")
+
+          try:
+              certificate = create_distribution_certificate()
+          except AppStoreConnectError as error:
+              if not is_distribution_certificate_conflict(error):
+                  print(error.body, file=sys.stderr)
+                  raise
+              print("Apple already has a current or pending iOS Distribution certificate; revoking the blocking certificate(s) and retrying.")
+              revoke_existing_distribution_certificates()
+              certificate = create_distribution_certificate()
+
           certificate_id = certificate["data"]["id"]
           certificate_content = certificate["data"]["attributes"]["certificateContent"]
           pathlib.Path(os.environ["CERTIFICATE_CER_PATH"]).write_bytes(base64.b64decode(certificate_content))

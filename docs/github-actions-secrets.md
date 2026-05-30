@@ -17,6 +17,12 @@ These are enough for the workflow to create an Apple Distribution certificate
 and App Store provisioning profile on the macOS runner. They are also used to
 upload the exported IPA to App Store Connect.
 
+If Apple reports that the account already has a current or pending iOS
+Distribution certificate, the workflow revokes the blocking
+`IOS_DISTRIBUTION` certificate(s) and retries with a fresh certificate owned by
+that GitHub Actions run. Use manual signing secrets instead if another build
+system must keep using the existing distribution certificate.
+
 | Purpose | Preferred secret | Supported aliases |
 | --- | --- | --- |
 | API key ID | `APP_STORE_CONNECT_API_KEY_ID` | `APP_STORE_CONNECT_KEY_ID`, `ASC_KEY_ID` |
