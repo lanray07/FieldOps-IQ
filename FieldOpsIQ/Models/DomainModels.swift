@@ -94,9 +94,9 @@ enum SubscriptionPlan: String, CaseIterable, Identifiable, Codable {
     var title: String {
         switch self {
         case .free: "Free"
-        case .professionalMonthly: "Professional Technician"
+        case .professionalMonthly: "Professional Monthly"
         case .professionalYearly: "Professional Yearly"
-        case .contractorProMonthly: "Contractor Pro"
+        case .contractorProMonthly: "Contractor Pro Monthly"
         }
     }
 
@@ -106,6 +106,23 @@ enum SubscriptionPlan: String, CaseIterable, Identifiable, Codable {
         case .professionalMonthly: "GBP 14.99/mo"
         case .professionalYearly: "GBP 119.99/yr"
         case .contractorProMonthly: "GBP 49.99/mo"
+        }
+    }
+
+    var subscriptionLength: String {
+        switch self {
+        case .free: "No subscription"
+        case .professionalMonthly, .contractorProMonthly: "1 month"
+        case .professionalYearly: "1 year"
+        }
+    }
+
+    var pricePerPeriod: String {
+        switch self {
+        case .free: "Included"
+        case .professionalMonthly: "GBP 14.99 per month"
+        case .professionalYearly: "GBP 119.99 per year"
+        case .contractorProMonthly: "GBP 49.99 per month"
         }
     }
 

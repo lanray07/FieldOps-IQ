@@ -1,6 +1,12 @@
 import Charts
+import Foundation
 import SwiftData
 import SwiftUI
+
+private enum FieldOpsLegalLinks {
+    static let privacyPolicy = URL(string: "https://github.com/lanray07/FieldOps-IQ/blob/main/PRIVACY_POLICY.md")!
+    static let termsOfUse = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+}
 
 struct AnalyticsDashboardView: View {
     @Query(sort: \Job.createdAt, order: .reverse) private var jobs: [Job]
@@ -288,6 +294,8 @@ struct PaywallView: View {
                         planCard(plan)
                     }
 
+                    subscriptionLegalPanel
+
                     if let errorMessage = subscription.errorMessage {
                         Text(errorMessage)
                             .font(.footnote)
@@ -318,6 +326,12 @@ struct PaywallView: View {
                         Text(plan.price)
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(FieldOpsTheme.cyan)
+                        Text(plan.subscriptionLength + " auto-renewable subscription")
+                            .font(.caption)
+                            .foregroundStyle(FieldOpsTheme.mutedText)
+                        Text("Price: \(plan.pricePerPeriod)")
+                            .font(.caption)
+                            .foregroundStyle(FieldOpsTheme.mutedText)
                     }
                     Spacer()
                     if subscription.activePlan == plan {
@@ -338,6 +352,28 @@ struct PaywallView: View {
                 }
                 .buttonStyle(PrimaryTechButtonStyle())
                 .disabled(subscription.activePlan == plan || subscription.isLoading)
+            }
+        }
+    }
+
+    private var subscriptionLegalPanel: some View {
+        PremiumPanel {
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader(title: "Subscription Terms", subtitle: "Required plan, renewal, privacy, and EULA information.")
+                Text("Plans are auto-renewable subscriptions. Payment is charged to your Apple ID. Subscriptions renew automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in Apple ID subscriptions.")
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.82))
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Link(destination: FieldOpsLegalLinks.termsOfUse) {
+                        Label("Terms of Use (EULA)", systemImage: "doc.text.fill")
+                    }
+                    Link(destination: FieldOpsLegalLinks.privacyPolicy) {
+                        Label("Privacy Policy", systemImage: "hand.raised.fill")
+                    }
+                }
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(FieldOpsTheme.cyan)
             }
         }
     }
@@ -464,8 +500,12 @@ struct SettingsView: View {
         PremiumPanel {
             VStack(alignment: .leading, spacing: 12) {
                 SectionHeader(title: "Legal", subtitle: "Privacy, terms, and engineering disclaimer.")
-                Text("Privacy Policy: local mock data remains on device unless you connect a backend.")
-                Text("Terms of Use: AI output is operational guidance only.")
+                Link(destination: FieldOpsLegalLinks.privacyPolicy) {
+                    Label("Privacy Policy", systemImage: "hand.raised.fill")
+                }
+                Link(destination: FieldOpsLegalLinks.termsOfUse) {
+                    Label("Terms of Use (EULA)", systemImage: "doc.text.fill")
+                }
                 Text("Engineering Disclaimer: FieldOps IQ does not certify installations, guarantee engineering outcomes, replace professional judgment, replace safety procedures, or provide regulatory approval.")
             }
             .font(.footnote)

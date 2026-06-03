@@ -413,6 +413,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "FieldOps IQ";
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "FieldOps IQ uses the camera to capture telecom equipment, site survey photos, and job evidence.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "FieldOps IQ uses the microphone to capture technician voice notes and convert them into reports.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FieldOps IQ imports photos for equipment scans, site surveys, and job documentation.";
@@ -451,6 +452,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "FieldOps IQ";
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "FieldOps IQ uses the camera to capture telecom equipment, site survey photos, and job evidence.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "FieldOps IQ uses the microphone to capture technician voice notes and convert them into reports.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FieldOps IQ imports photos for equipment scans, site surveys, and job documentation.";
