@@ -294,6 +294,8 @@ struct PaywallView: View {
                         planCard(plan)
                     }
 
+                    restorePurchasesPanel
+
                     subscriptionLegalPanel
 
                     if let errorMessage = subscription.errorMessage {
@@ -352,6 +354,29 @@ struct PaywallView: View {
                 }
                 .buttonStyle(PrimaryTechButtonStyle())
                 .disabled(subscription.activePlan == plan || subscription.isLoading)
+            }
+        }
+    }
+
+    private var restorePurchasesPanel: some View {
+        PremiumPanel {
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader(title: "Restore Purchases", subtitle: "Recover subscriptions previously purchased with this Apple ID.")
+
+                Button {
+                    Task { await subscription.restorePurchases() }
+                } label: {
+                    Label("Restore Purchases", systemImage: "arrow.clockwise.circle.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(PrimaryTechButtonStyle())
+                .disabled(subscription.isLoading)
+
+                if let restoreMessage = subscription.restoreMessage {
+                    Text(restoreMessage)
+                        .font(.footnote)
+                        .foregroundStyle(restoreMessage.hasPrefix("No previous") ? FieldOpsTheme.mutedText : FieldOpsTheme.success)
+                }
             }
         }
     }

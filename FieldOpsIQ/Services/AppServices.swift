@@ -335,6 +335,7 @@ final class SubscriptionService {
     var renewsAt: Date?
     var isLoading = false
     var errorMessage: String?
+    var restoreMessage: String?
 
     var statusText: String {
         activePlan == .free ? "Free plan" : "\(activePlan.title) active"
@@ -357,6 +358,9 @@ final class SubscriptionService {
             return
         }
 
+        errorMessage = nil
+        restoreMessage = nil
+
         guard let productID = productIdentifiers[plan],
               let product = products.first(where: { $0.id == productID }) else {
             activePlan = plan
@@ -377,15 +381,45 @@ final class SubscriptionService {
         }
     }
 
-    func refreshEntitlements() async {
+    func restorePurchases() async {
+        isLoading = true
+        errorMessage = nil
+        restoreMessage = nil
+        defer { isLoading = false }
+
+        do {
+            try await AppStore.sync()
+            let restored = await refreshEntitlements()
+            restoreMessage = restored ? "\(activePlan.title) restored." : "No previous purchases were found for this Apple ID."
+        } catch {
+            errorMessage = "Restore purchases failed: \(error.localizedDescription)"
+        }
+    }
+
+    @discardableResult
+    func refreshEntitlements() async -> Bool {
+        var restoredPlan: SubscriptionPlan?
+        var restoredRenewal: Date?
+
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
                   let plan = plan(for: transaction.productID) else {
                 continue
             }
-            activePlan = plan
-            renewsAt = transaction.expirationDate
+            restoredPlan = plan
+            restoredRenewal = transaction.expirationDate
+            break
         }
+
+        if let restoredPlan {
+            activePlan = restoredPlan
+            renewsAt = restoredRenewal
+            return true
+        }
+
+        activePlan = .free
+        renewsAt = nil
+        return false
     }
 
     private func plan(for productID: String) -> SubscriptionPlan? {
